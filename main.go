@@ -19,7 +19,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "oreno-tools",
 		Width:  1200,
-		Height: 900,
+		Height: 1000,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
