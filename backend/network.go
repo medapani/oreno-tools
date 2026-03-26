@@ -3,6 +3,7 @@ package backend
 import (
 	"fmt"
 	"net"
+	"strings"
 )
 
 // CIDRCalculationResult はCIDR計算の結果を保持する構造体
@@ -19,10 +20,21 @@ type CIDRCalculationResult struct {
 	BinarySubnetMask string `json:"binarySubnetMask"`
 	IPClass          string `json:"ipClass"`
 	IPType           string `json:"ipType"`
+	InputIP          string `json:"inputIp"`
+	InputWasHost     bool   `json:"inputWasHost"`
 }
 
 // CalculateCIDR はCIDR表記からネットワーク情報を計算する
 func CalculateCIDR(cidr string) (CIDRCalculationResult, error) {
+	parts := strings.Split(cidr, "/")
+	if len(parts) != 2 {
+		return CIDRCalculationResult{}, fmt.Errorf("無効なCIDR表記です")
+	}
+	originalIP := net.ParseIP(strings.TrimSpace(parts[0]))
+	if originalIP == nil {
+		return CIDRCalculationResult{}, fmt.Errorf("無効なIPアドレスです")
+	}
+
 	// CIDR表記をパース
 	_, ipNet, err := net.ParseCIDR(cidr)
 	if err != nil {
@@ -87,6 +99,8 @@ func CalculateCIDR(cidr string) (CIDRCalculationResult, error) {
 	// IPタイプを判定（プライベート/パブリック）
 	ipType := determineIPType(networkAddr)
 
+	inputWasHost := !networkAddr.Equal(originalIP)
+
 	return CIDRCalculationResult{
 		NetworkAddress:   networkAddr.String(),
 		BroadcastAddress: broadcastAddr.String(),
@@ -100,6 +114,8 @@ func CalculateCIDR(cidr string) (CIDRCalculationResult, error) {
 		BinarySubnetMask: binaryMask,
 		IPClass:          ipClass,
 		IPType:           ipType,
+		InputIP:          originalIP.String(),
+		InputWasHost:     inputWasHost,
 	}, nil
 }
 

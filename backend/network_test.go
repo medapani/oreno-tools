@@ -7,84 +7,109 @@ import (
 
 func TestCalculateCIDR(t *testing.T) {
 	tests := []struct {
-		name            string
-		cidr            string
-		wantNetwork     string
-		wantBroadcast   string
-		wantSubnetMask  string
-		wantFirstHost   string
-		wantLastHost    string
-		wantTotalHosts  int64
-		wantUsableHosts int64
-		wantIPClass     string
-		wantIPType      string
-		wantErr         bool
+		name             string
+		cidr             string
+		wantNetwork      string
+		wantBroadcast    string
+		wantSubnetMask   string
+		wantFirstHost    string
+		wantLastHost     string
+		wantTotalHosts   int64
+		wantUsableHosts  int64
+		wantIPClass      string
+		wantIPType       string
+		wantInputIP      string
+		wantInputWasHost bool
+		wantErr          bool
 	}{
 		{
-			name:            "192.168.1.0/24 (クラスC プライベート)",
-			cidr:            "192.168.1.0/24",
-			wantNetwork:     "192.168.1.0",
-			wantBroadcast:   "192.168.1.255",
-			wantSubnetMask:  "255.255.255.0",
-			wantFirstHost:   "192.168.1.1",
-			wantLastHost:    "192.168.1.254",
-			wantTotalHosts:  256,
-			wantUsableHosts: 254,
-			wantIPClass:     "C",
-			wantIPType:      "Private",
-			wantErr:         false,
+			name:             "192.168.1.0/24 (クラスC プライベート)",
+			cidr:             "192.168.1.0/24",
+			wantNetwork:      "192.168.1.0",
+			wantBroadcast:    "192.168.1.255",
+			wantSubnetMask:   "255.255.255.0",
+			wantFirstHost:    "192.168.1.1",
+			wantLastHost:     "192.168.1.254",
+			wantTotalHosts:   256,
+			wantUsableHosts:  254,
+			wantIPClass:      "C",
+			wantIPType:       "Private",
+			wantInputIP:      "192.168.1.0",
+			wantInputWasHost: false,
+			wantErr:          false,
 		},
 		{
-			name:            "10.0.0.0/8 (クラスA プライベート)",
-			cidr:            "10.0.0.0/8",
-			wantNetwork:     "10.0.0.0",
-			wantBroadcast:   "10.255.255.255",
-			wantSubnetMask:  "255.0.0.0",
-			wantTotalHosts:  16777216,
-			wantUsableHosts: 16777214,
-			wantIPClass:     "A",
-			wantIPType:      "Private",
-			wantErr:         false,
+			name:             "10.0.0.0/8 (クラスA プライベート)",
+			cidr:             "10.0.0.0/8",
+			wantNetwork:      "10.0.0.0",
+			wantBroadcast:    "10.255.255.255",
+			wantSubnetMask:   "255.0.0.0",
+			wantTotalHosts:   16777216,
+			wantUsableHosts:  16777214,
+			wantIPClass:      "A",
+			wantIPType:       "Private",
+			wantInputIP:      "10.0.0.0",
+			wantInputWasHost: false,
+			wantErr:          false,
 		},
 		{
-			name:            "172.16.0.0/12 (クラスB プライベート)",
-			cidr:            "172.16.0.0/12",
-			wantNetwork:     "172.16.0.0",
-			wantBroadcast:   "172.31.255.255",
-			wantSubnetMask:  "255.240.0.0",
-			wantTotalHosts:  1048576,
-			wantUsableHosts: 1048574,
-			wantIPClass:     "B",
-			wantIPType:      "Private",
-			wantErr:         false,
+			name:             "172.16.0.0/12 (クラスB プライベート)",
+			cidr:             "172.16.0.0/12",
+			wantNetwork:      "172.16.0.0",
+			wantBroadcast:    "172.31.255.255",
+			wantSubnetMask:   "255.240.0.0",
+			wantTotalHosts:   1048576,
+			wantUsableHosts:  1048574,
+			wantIPClass:      "B",
+			wantIPType:       "Private",
+			wantInputIP:      "172.16.0.0",
+			wantInputWasHost: false,
+			wantErr:          false,
 		},
 		{
-			name:            "8.8.8.0/24 (パブリック)",
-			cidr:            "8.8.8.0/24",
-			wantNetwork:     "8.8.8.0",
-			wantBroadcast:   "8.8.8.255",
-			wantTotalHosts:  256,
-			wantUsableHosts: 254,
-			wantIPClass:     "A",
-			wantIPType:      "Public",
-			wantErr:         false,
+			name:             "8.8.8.0/24 (パブリック)",
+			cidr:             "8.8.8.0/24",
+			wantNetwork:      "8.8.8.0",
+			wantBroadcast:    "8.8.8.255",
+			wantTotalHosts:   256,
+			wantUsableHosts:  254,
+			wantIPClass:      "A",
+			wantIPType:       "Public",
+			wantInputIP:      "8.8.8.0",
+			wantInputWasHost: false,
+			wantErr:          false,
 		},
 		{
-			name:            "/30 ネットワーク (usable hosts = 2)",
-			cidr:            "192.168.1.0/30",
-			wantNetwork:     "192.168.1.0",
-			wantBroadcast:   "192.168.1.3",
-			wantTotalHosts:  4,
-			wantUsableHosts: 2,
-			wantErr:         false,
+			name:             "/30 ネットワーク (usable hosts = 2)",
+			cidr:             "192.168.1.0/30",
+			wantNetwork:      "192.168.1.0",
+			wantBroadcast:    "192.168.1.3",
+			wantTotalHosts:   4,
+			wantUsableHosts:  2,
+			wantInputIP:      "192.168.1.0",
+			wantInputWasHost: false,
+			wantErr:          false,
 		},
 		{
-			name:            "/32 ホストルート",
-			cidr:            "192.168.1.1/32",
-			wantNetwork:     "192.168.1.1",
-			wantTotalHosts:  1,
-			wantUsableHosts: 0,
-			wantErr:         false,
+			name:             "/32 ホストルート",
+			cidr:             "192.168.1.1/32",
+			wantNetwork:      "192.168.1.1",
+			wantTotalHosts:   1,
+			wantUsableHosts:  0,
+			wantInputIP:      "192.168.1.1",
+			wantInputWasHost: false,
+			wantErr:          false,
+		},
+		{
+			name:             "ネットワークアドレスではない入力に注意表示",
+			cidr:             "10.10.70.140/25",
+			wantNetwork:      "10.10.70.128",
+			wantBroadcast:    "10.10.70.255",
+			wantTotalHosts:   128,
+			wantUsableHosts:  126,
+			wantInputIP:      "10.10.70.140",
+			wantInputWasHost: true,
+			wantErr:          false,
 		},
 		{
 			name:    "不正なCIDR",
@@ -134,6 +159,12 @@ func TestCalculateCIDR(t *testing.T) {
 			}
 			if tt.wantIPType != "" && got.IPType != tt.wantIPType {
 				t.Errorf("IPType = %q, want %q", got.IPType, tt.wantIPType)
+			}
+			if tt.wantInputIP != "" && got.InputIP != tt.wantInputIP {
+				t.Errorf("InputIP = %q, want %q", got.InputIP, tt.wantInputIP)
+			}
+			if got.InputWasHost != tt.wantInputWasHost {
+				t.Errorf("InputWasHost = %v, want %v", got.InputWasHost, tt.wantInputWasHost)
 			}
 		})
 	}

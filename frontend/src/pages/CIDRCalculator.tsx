@@ -15,6 +15,12 @@ interface CIDRResult {
   binarySubnetMask: string;
   ipClass: string;
   ipType: string;
+  inputIp: string;
+  inputWasHost: boolean;
+}
+
+function buildInputNotice(result: CIDRResult): string {
+  return `入力IP ${result.inputIp} はネットワークアドレスではなくホストアドレスです。単一ホストを表す場合は ${result.inputIp}/32 を使用してください。`;
 }
 
 export default function CIDRCalculator() {
@@ -72,6 +78,13 @@ export default function CIDRCalculator() {
 
         {result && (
           <div className="space-y-4">
+            {result.inputWasHost && (
+              <div className="p-4 bg-amber-900/60 border border-amber-600 rounded">
+                <div className="text-amber-300 font-semibold mb-1">入力値に関する注意</div>
+                <p className="text-amber-100 text-sm leading-relaxed">{buildInputNotice(result)}</p>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-700 p-4 rounded">
                 <div className="text-sm text-gray-400 mb-1">ネットワークアドレス</div>
@@ -132,6 +145,7 @@ export default function CIDRCalculator() {
             <div className="bg-gray-700 p-4 rounded">
               <div className="text-sm text-gray-400 mb-2">サマリー</div>
               <div className="text-sm space-y-1">
+                <div>入力IP: <span className="font-mono">{result.inputIp}</span></div>
                 <div>CIDR: <span className="font-mono">{result.cidr}</span></div>
                 <div>ネットワーク範囲: <span className="font-mono">
                   {result.firstHostAddress} - {result.lastHostAddress}

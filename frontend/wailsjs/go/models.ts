@@ -49,6 +49,8 @@ export namespace backend {
 	    binarySubnetMask: string;
 	    ipClass: string;
 	    ipType: string;
+	    inputIp: string;
+	    inputWasHost: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new CIDRCalculationResult(source);
@@ -68,6 +70,8 @@ export namespace backend {
 	        this.binarySubnetMask = source["binarySubnetMask"];
 	        this.ipClass = source["ipClass"];
 	        this.ipType = source["ipType"];
+	        this.inputIp = source["inputIp"];
+	        this.inputWasHost = source["inputWasHost"];
 	    }
 	}
 	export class CRLUpdateResult {
