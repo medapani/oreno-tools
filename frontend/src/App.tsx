@@ -13,6 +13,7 @@ import MTLSCertTool from './pages/MTLSCertTool';
 import CRLTool from './pages/CRLTool';
 import CIDRCalculator from './pages/CIDRCalculator';
 import BaseConverter from './pages/BaseConverter';
+import QRCodeTool from './pages/QRCodeTool';
 import Layout from './components/Layout';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
                     <Route path="/crl-tool" element={<CRLTool />} />
                     <Route path="/cidr-calculator" element={<CIDRCalculator />} />
                     <Route path="/base-converter" element={<BaseConverter />} />
+                    <Route path="/qrcode" element={<QRCodeTool />} />
                 </Route>
             </Routes>
         </HashRouter>

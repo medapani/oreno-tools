@@ -28,6 +28,8 @@ export function GenerateMTLSCertificatesMultiClient(arg1:string,arg2:string,arg3
 
 export function GeneratePrivateKey(arg1:string):Promise<string>;
 
+export function GenerateQRCode(arg1:string,arg2:number,arg3:string):Promise<string>;
+
 export function GenerateSelfSignedCertificate(arg1:string,arg2:string,arg3:Array<string>,arg4:number,arg5:string):Promise<backend.SelfSignedCertificateResult>;
 
 export function JWTDecode(arg1:string):Promise<backend.JWTDecodeResult>;

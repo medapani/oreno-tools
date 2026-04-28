@@ -71,6 +71,12 @@ export default function Layout() {
             基数変換/計算
           </NavLink>
           <NavLink
+            to="/qrcode"
+            className={({ isActive }) => `${baseMenuClass} ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 text-gray-100'}`}
+          >
+            QR コード生成
+          </NavLink>
+          <NavLink
             to="/key-pair"
             className={({ isActive }) => `${baseMenuClass} ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 text-gray-100'}`}
           >

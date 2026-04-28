@@ -54,6 +54,10 @@ export function GeneratePrivateKey(arg1) {
   return window['go']['main']['App']['GeneratePrivateKey'](arg1);
 }
 
+export function GenerateQRCode(arg1, arg2, arg3) {
+  return window['go']['main']['App']['GenerateQRCode'](arg1, arg2, arg3);
+}
+
 export function GenerateSelfSignedCertificate(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['GenerateSelfSignedCertificate'](arg1, arg2, arg3, arg4, arg5);
 }

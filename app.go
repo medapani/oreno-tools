@@ -119,3 +119,7 @@ func (a *App) ConvertBaseValue(input string, base int, bitWidth int, signed bool
 func (a *App) CalculateBaseExpression(aInput string, aBase int, operator string, bInput string, bBase int) (backend.BaseCalculationResult, error) {
 	return backend.CalculateBaseExpression(aInput, aBase, operator, bInput, bBase)
 }
+
+func (a *App) GenerateQRCode(text string, size int, recoveryLevel string) (string, error) {
+	return backend.GenerateQRCode(text, size, recoveryLevel)
+}
