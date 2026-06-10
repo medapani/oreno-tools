@@ -2,8 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"oreno-tools/backend"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
@@ -122,4 +128,41 @@ func (a *App) CalculateBaseExpression(aInput string, aBase int, operator string,
 
 func (a *App) GenerateQRCode(text string, size int, recoveryLevel string) (string, error) {
 	return backend.GenerateQRCode(text, size, recoveryLevel)
+}
+
+func (a *App) SaveQRCodePNG(base64PNG string, filename string) (string, error) {
+	return backend.SaveQRCodePNG(base64PNG, filename)
+}
+
+func (a *App) SaveQRCodePNGAs(base64PNG string, filename string) (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("home directory の取得に失敗しました: %w", err)
+	}
+
+	defaultFilename := strings.TrimSpace(filename)
+	if defaultFilename == "" {
+		defaultFilename = "qrcode.png"
+	}
+	if !strings.HasSuffix(strings.ToLower(defaultFilename), ".png") {
+		defaultFilename += ".png"
+	}
+
+	targetPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:            "QRコード画像の保存",
+		DefaultDirectory: filepath.Join(homeDir, "Downloads"),
+		DefaultFilename:  defaultFilename,
+		Filters: []runtime.FileFilter{
+			{DisplayName: "PNG Image (*.png)", Pattern: "*.png"},
+		},
+	})
+	if err != nil {
+		return "", fmt.Errorf("保存先ダイアログの表示に失敗しました: %w", err)
+	}
+
+	if strings.TrimSpace(targetPath) == "" {
+		return "", nil
+	}
+
+	return backend.SaveQRCodePNGToPath(base64PNG, targetPath)
 }

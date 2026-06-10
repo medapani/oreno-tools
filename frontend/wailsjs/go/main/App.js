@@ -74,6 +74,14 @@ export function JWTVerify(arg1, arg2) {
   return window['go']['main']['App']['JWTVerify'](arg1, arg2);
 }
 
+export function SaveQRCodePNG(arg1, arg2) {
+  return window['go']['main']['App']['SaveQRCodePNG'](arg1, arg2);
+}
+
+export function SaveQRCodePNGAs(arg1, arg2) {
+  return window['go']['main']['App']['SaveQRCodePNGAs'](arg1, arg2);
+}
+
 export function SaveTextFile(arg1, arg2) {
   return window['go']['main']['App']['SaveTextFile'](arg1, arg2);
 }

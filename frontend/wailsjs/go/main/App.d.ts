@@ -38,6 +38,10 @@ export function JWTEncode(arg1:string,arg2:string,arg3:string):Promise<string>;
 
 export function JWTVerify(arg1:string,arg2:string):Promise<backend.JWTDecodeResult>;
 
+export function SaveQRCodePNG(arg1:string,arg2:string):Promise<string>;
+
+export function SaveQRCodePNGAs(arg1:string,arg2:string):Promise<string>;
+
 export function SaveTextFile(arg1:string,arg2:string):Promise<string>;
 
 export function VerifyKeyPair(arg1:string,arg2:string,arg3:string):Promise<boolean>;

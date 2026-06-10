@@ -74,7 +74,7 @@ export default function Layout() {
             to="/qrcode"
             className={({ isActive }) => `${baseMenuClass} ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-gray-700 text-gray-100'}`}
           >
-            QR コード生成
+            QR コード生成/解析
           </NavLink>
           <NavLink
             to="/key-pair"
